@@ -95,11 +95,11 @@ class SCALOR(nn.Module):
         B, *_ = fg.size()
 
 
-        dist_fg = Normal(fg, 0.5)
+        dist_fg = Normal(fg, 1.0)
         loglikelihood_fg = dist_fg.log_prob(x)
         loglikelihood_fg = loglikelihood_fg + (alpha_map + 1e-14).log()
         # (B, 3, H, W)
-        dist_bg = Normal(bg, 0.5)
+        dist_bg = Normal(bg, 0.1)
         loglikelihood_bg = dist_bg.log_prob(x)
         loglikelihood_bg = loglikelihood_bg + (1. - alpha_map + 1e-14).log()
 
