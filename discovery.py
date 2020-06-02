@@ -218,7 +218,7 @@ class ProposalCore(nn.Module):
         z_where_origin = z_where.clone()
 
         z_where = torch.cat([
-            z_where[:, :2].relu() + 1e-6,
+            torch.sigmoid(z_where[:, :2]) + 1e-6,
             2. / self.args.num_cell_h * (self.offset + 0.5 + z_where[:, 2:].tanh()) - 1
         ], dim=-1)
 
@@ -262,7 +262,7 @@ class ProposalRejectionCell(nn.Module):
         self.register_buffer('prior_where_mean',
                              torch.tensor([-5., -5., 0., 0.]).view((z_where_scale_dim + z_where_shift_dim), 1, 1))
         self.register_buffer('prior_where_std',
-                             torch.tensor([2.0, 2.0, 1., 1.]).view((z_where_scale_dim + z_where_shift_dim), 1, 1))
+                             torch.tensor([0.3, 0.3, 1., 1.]).view((z_where_scale_dim + z_where_shift_dim), 1, 1))
         self.register_buffer('prior_z_pres_prob', torch.tensor(self.z_pres_anneal_start_value))
         self.register_buffer('num_cell', torch.tensor(self.args.num_cell_h * self.args.num_cell_w))
 
