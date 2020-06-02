@@ -251,11 +251,11 @@ class SCALOR(nn.Module):
 
             y = y_nobg + (1 - alpha_map) * bg
 
-            # p_x_z = Normal(y.flatten(1), self.args.sigma)
-            # log_like = p_x_z.log_prob(x.view(-1, 3, img_h, img_w).
-            #                           expand_as(y).flatten(1)).sum(-1)  # sum image dims (C, H, W)
+            p_x_z = Normal(y.flatten(1), self.args.sigma)
+            log_like = p_x_z.log_prob(x.view(-1, 3, img_h, img_w).
+                                      expand_as(y).flatten(1)).sum(-1)  # sum image dims (C, H, W)
 
-            log_like = self.mixture_likelihood(x.view(-1, 3, img_h, img_w).expand_as(y), y_nobg, bg, alpha_map)
+            # log_like = self.mixture_likelihood(x.view(-1, 3, img_h, img_w).expand_as(y), y_nobg, bg, alpha_map)
 
             if not self.args.phase_no_background:
                 # Alpha map kl
