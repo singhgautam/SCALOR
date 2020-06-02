@@ -78,6 +78,41 @@ class SCALOR(nn.Module):
 
         return self.bg_prior_rnn_init_hid
 
+    def mixture_likelihood(self, x, fg, bg, alpha_map):
+        """
+        Compute mixture likelihood while handling many different things
+
+        - fix_alpha_steps
+        - fix_alpha_value
+        Args:
+            fg: (B, T, C, H, W)
+            bg: (B, T, C, H, W)
+            alpha_map: (B, T, 1, H, W)
+
+        Returns:
+
+        """
+        B, *_ = fg.size()
+
+
+        dist_fg = Normal(fg, 0.2)
+        loglikelihood_fg = dist_fg.log_prob(x)
+        loglikelihood_fg = loglikelihood_fg + (alpha_map + 1e-14).log()
+        # (B, 3, H, W)
+        dist_bg = Normal(bg, 0.2)
+        loglikelihood_bg = dist_bg.log_prob(x)
+        loglikelihood_bg = loglikelihood_bg + (1. - alpha_map + 1e-14).log()
+
+        # (B, 2, T, 3, H, W)
+        loglikelihood = torch.stack([loglikelihood_fg, loglikelihood_bg], dim=1)
+        # (B, T, 3, H, W)
+        loglikelihood = torch.logsumexp(loglikelihood, dim=1)
+        # (B,)
+        loglikelihood = loglikelihood.flatten(start_dim=1).sum(-1)
+        assert loglikelihood.size() == (B,)
+
+        return loglikelihood
+
     def forward(self, seq, eps=1e-15):
 
         bs = seq.size(0)
@@ -216,9 +251,11 @@ class SCALOR(nn.Module):
 
             y = y_nobg + (1 - alpha_map) * bg
 
-            p_x_z = Normal(y.flatten(1), self.args.sigma)
-            log_like = p_x_z.log_prob(x.view(-1, 3, img_h, img_w).
-                                      expand_as(y).flatten(1)).sum(-1)  # sum image dims (C, H, W)
+            # p_x_z = Normal(y.flatten(1), self.args.sigma)
+            # log_like = p_x_z.log_prob(x.view(-1, 3, img_h, img_w).
+            #                           expand_as(y).flatten(1)).sum(-1)  # sum image dims (C, H, W)
+
+            log_like = self.mixture_likelihood(x.view(-1, 3, img_h, img_w).expand_as(y), y_nobg, bg, alpha_map)
 
             if not self.args.phase_no_background:
                 # Alpha map kl
