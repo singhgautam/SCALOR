@@ -244,9 +244,9 @@ class ProposalRejectionCell(nn.Module):
 
         self.z_pres_anneal_start_step = 0000
         self.z_pres_anneal_end_step = 500
-        self.z_pres_anneal_start_value = 1e-50
-        self.z_pres_anneal_end_value = 1e-50 # self.args.z_pres_anneal_end_value
-        self.z_pres_masked_prior = 1e-50
+        self.z_pres_anneal_start_value = 1e-10
+        self.z_pres_anneal_end_value = 1e-10 # self.args.z_pres_anneal_end_value
+        self.z_pres_masked_prior = 1e-10
         self.max_num_obj = args.max_num_obj
 
         self.ProposalNet = ProposalCore(self.args)
