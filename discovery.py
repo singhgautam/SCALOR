@@ -270,7 +270,7 @@ class ProposalRejectionCell(nn.Module):
 
     def anneal(self, global_step):
         where_std = np.interp(global_step, [0, 1000, 1500, 15000, 17000], [0.3, 0.3, 0.01, 0.01, 0.15])
-        self.prior_where_std = torch.tensor([where_std, where_std, 1., 1.]).view((z_where_scale_dim + z_where_shift_dim), 1, 1)
+        self.prior_where_std = self.prior_where_std.new_tensor([where_std, where_std, 1., 1.]).view((z_where_scale_dim + z_where_shift_dim), 1, 1)
 
     @property
     def p_bg_what(self):
