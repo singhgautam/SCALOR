@@ -217,7 +217,7 @@ class ProposalCore(nn.Module):
         # (bs, dim, 8, 8)
         z_where_origin = z_where.clone()
 
-        z_where[:, :2] = z_where[:, :2].tanh()
+        z_where[:, :2] = z_where[:, :2].relu() + 1e-6
 
         # scale, ratio = z_where[:, :2].tanh().chunk(2, 1)
         # scale = self.args.size_anc + self.args.var_s * scale  # add bias to let masking do its job
