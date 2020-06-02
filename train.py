@@ -70,7 +70,7 @@ def main(args):
 
             tau = np.exp(global_step * log_tau_gamma)
             tau = max(tau, args.tau_end)
-            args.tau = 2.0
+            args.tau = 1.0
 
             global_step += 1
 
