@@ -345,19 +345,28 @@ class SCALOR(nn.Module):
                 id_color_map = (torch.cat((alpha_map_prop, alpha_map_disc), dim=1) > .3).float() * id_color
                 mask_color = (id_color_map * importance_map_norm.detach()).sum(dim=1)
                 x_mask_color = x - 0.7 * (alpha_map > .3).float() * (x - mask_color)
+                # scalor_step_log = {
+                #     # 'y_each_obj': y_each_obj.cpu().detach(),
+                #     # 'importance_map_norm': importance_map_norm.cpu().detach(),
+                #     # 'importance_map': importance_map.cpu().detach(),
+                #     # 'bg': bg.cpu().detach(),
+                #     # 'alpha_map': alpha_map.cpu().detach(),
+                #     # 'x_mask_color': x_mask_color.cpu().detach(),
+                #     # 'mask_color': mask_color.cpu().detach(),
+                #     # 'p_bg_what_mean': p_bg_what_mean.cpu().detach() if i > 0 else self.p_bg_what_t1.mean.cpu().detach(),
+                #     # 'p_bg_what_std': p_bg_what_std.cpu().detach() if i > 0 else self.p_bg_what_t1.stddev.cpu().detach(),
+                #     # 'z_bg_mean': z_bg_mean.cpu().detach(),
+                #     # 'z_bg_std': z_bg_std.cpu().detach(),
+                #     'z'
+                #
+                # }
+
                 scalor_step_log = {
-                    'y_each_obj': y_each_obj.cpu().detach(),
-                    'importance_map_norm': importance_map_norm.cpu().detach(),
-                    'importance_map': importance_map.cpu().detach(),
-                    'bg': bg.cpu().detach(),
-                    'alpha_map': alpha_map.cpu().detach(),
-                    'x_mask_color': x_mask_color.cpu().detach(),
-                    'mask_color': mask_color.cpu().detach(),
-                    'p_bg_what_mean': p_bg_what_mean.cpu().detach() if i > 0 else self.p_bg_what_t1.mean.cpu().detach(),
-                    'p_bg_what_std': p_bg_what_std.cpu().detach() if i > 0 else self.p_bg_what_t1.stddev.cpu().detach(),
-                    'z_bg_mean': z_bg_mean.cpu().detach(),
-                    'z_bg_std': z_bg_std.cpu().detach()
+                    'z_where': z_where_pre,
+                    'z_pres': z_pres_pre,
+                    'ids': ids_pre,
                 }
+
                 if self.args.phase_conv_lstm:
                     for l_n, log in enumerate(lstm_gate_log):
                         for k, v in log[i].items():

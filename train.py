@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader
 import torch.optim
 from torch.nn.utils import clip_grad_norm_
 from data import TrainStation
+from physics import Physics
 from log_utils import log_summary
 from utils import save_ckpt, load_ckpt, print_scalor
 from common import *
@@ -30,7 +31,11 @@ def main(args):
     device = torch.device(
        "cuda" if not args.nocuda and torch.cuda.is_available() else "cpu")
 
-    train_data = TrainStation(args=args, train=True)
+    # train_data = TrainStation(args=args, train=True)
+    train_data = Physics(
+        root=args.data_dir,
+        mode='train'
+    )
 
     train_loader = DataLoader(
         train_data, batch_size=args.batch_size, shuffle=True, num_workers=args.workers, drop_last=True)
@@ -61,7 +66,7 @@ def main(args):
         end_time = time.time()
 
 
-        for batch_idx, (sample, counting_gt) in enumerate(train_loader):
+        for batch_idx, (sample, gt_positions) in enumerate(train_loader):
 
             tau = np.exp(global_step * log_tau_gamma)
             tau = max(tau, args.tau_end)
