@@ -36,7 +36,7 @@ def parse(parser):
                         help='exponential decay factor for tau')
     parser.add_argument('--seed', default=666, type=int,
                         help='Fixed random seed.')
-    parser.add_argument('--sigma', default=0.1, type=float, metavar='S',
+    parser.add_argument('--sigma', default=4.0, type=float, metavar='S',
                         help='Sigma for log likelihood.')
     parser.add_argument('--phase-parallel', default=False, type=bool,
                         help='Multi-GPUs')
