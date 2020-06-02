@@ -55,7 +55,7 @@ cfg = {
     'gen_disc_pres_probs': 0.1,
     'observe_frames': 5,
     'size_anc': 0.1,
-    'var_s': 0.03,
+    'var_s': 1.0,
     'ratio_anc': 2.5,
     'var_anc': 0.5,
     'train_station_cropping_origin': 240,
