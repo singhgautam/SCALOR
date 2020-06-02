@@ -6,6 +6,7 @@ from torch.distributions import Normal, kl_divergence
 from utils import linear_annealing, spatial_transform, calc_kl_z_pres_bernoulli
 from modules import NumericalRelaxedBernoulli
 from common import *
+import numpy as np
 
 
 class ProposalCore(nn.Module):
@@ -265,6 +266,11 @@ class ProposalRejectionCell(nn.Module):
                              torch.tensor([0.15, 0.15, 1., 1.]).view((z_where_scale_dim + z_where_shift_dim), 1, 1))
         self.register_buffer('prior_z_pres_prob', torch.tensor(self.z_pres_anneal_start_value))
         self.register_buffer('num_cell', torch.tensor(self.args.num_cell_h * self.args.num_cell_w))
+
+
+    def anneal(self, global_step):
+        where_std = np.interp(global_step, [0, 1000, 1500, 15000, 17000], [0.3, 0.3, 0.01, 0.01, 0.15])
+        self.prior_where_std = torch.tensor([where_std, where_std, 1., 1.]).view((z_where_scale_dim + z_where_shift_dim), 1, 1)
 
     @property
     def p_bg_what(self):

@@ -84,8 +84,8 @@ def main(args):
             global_step += 1
 
             # anneal
-            model.args.sigma = np.interp(global_step, [0, 1000, 10000, 14000], [8.0, 0.0005, 0.0005, 0.15])
-
+            model.args.sigma = np.interp(global_step, [0, 1000, 15000, 17000], [8.0, 0.0005, 0.0005, 0.15])
+            model.proposal_rejection_cell.anneal(global_step)
 
             log_phase = global_step % args.print_freq == 0 or global_step == 1
             args.global_step = global_step
