@@ -56,7 +56,7 @@ cfg = {
     'observe_frames': 5,
     'size_anc': 0.1,
     'var_s': 1.0,
-    'ratio_anc': 2.5,
+    'ratio_anc': 1.0,
     'var_anc': 0.5,
     'train_station_cropping_origin': 240,
     'color_num': 500,
