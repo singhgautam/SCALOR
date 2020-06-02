@@ -14,9 +14,18 @@ from utils import save_ckpt, load_ckpt, print_scalor
 from common import *
 import parse
 
+
 from tensorboardX import SummaryWriter
 
 from scalor import SCALOR
+
+
+def random_crop(seq, T):
+    t_seq = seq.size(1)
+    assert t_seq >= T, f't_seq: {t_seq}, T: {T}'
+    # start = random.randint(0, t_seq - T)
+    start = 0
+    return seq[:, start:start + T]
 
 
 def main(args):
@@ -83,6 +92,8 @@ def main(args):
             args.log_phase = log_phase
 
             imgs = sample.to(device)
+            imgs = random_crop(imgs, 2)
+
 
             y_seq, log_like, kl_z_what, kl_z_where, kl_z_depth, \
             kl_z_pres, kl_z_bg, log_imp, counting, \
