@@ -474,7 +474,8 @@ class ConvLSTMEncoder(nn.Module):
         :return:
         """
         bs = x.size(0)
-        img_conv_enc = self.image_enc(x.view(-1, x.size(2), x.size(3), x.size(4)))
+        # img_conv_enc = self.image_enc(x.view(-1, x.size(2), x.size(3), x.size(4)))
+        img_conv_enc = self.image_enc(x.flatten(end_dim=1))
 
         img_conv_enc = img_conv_enc.view(bs, -1, img_conv_enc.size(-3), img_conv_enc.size(-2), img_conv_enc.size(-1))
 
