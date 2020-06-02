@@ -74,6 +74,10 @@ def main(args):
 
             global_step += 1
 
+            # anneal
+            args.sigma = np.interp(global_step, [0, 1000, 10000, 14000], [8.0, 0.0005, 0.0005, 0.15])
+
+
             log_phase = global_step % args.print_freq == 0 or global_step == 1
             args.global_step = global_step
             args.log_phase = log_phase
