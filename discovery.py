@@ -217,12 +217,14 @@ class ProposalCore(nn.Module):
         # (bs, dim, 8, 8)
         z_where_origin = z_where.clone()
 
-        scale, ratio = z_where[:, :2].tanh().chunk(2, 1)
-        scale = self.args.size_anc + self.args.var_s * scale  # add bias to let masking do its job
-        ratio = self.args.ratio_anc + self.args.var_anc * ratio
-        ratio_sqrt = ratio.sqrt()
-        z_where[:, 0:1] = scale / ratio_sqrt
-        z_where[:, 1:2] = scale * ratio_sqrt
+        z_where[:, :2] = z_where[:, :2].tanh()
+
+        # scale, ratio = z_where[:, :2].tanh().chunk(2, 1)
+        # scale = self.args.size_anc + self.args.var_s * scale  # add bias to let masking do its job
+        # ratio = self.args.ratio_anc + self.args.var_anc * ratio
+        # ratio_sqrt = ratio.sqrt()
+        # z_where[:, 0:1] = scale / ratio_sqrt
+        # z_where[:, 1:2] = scale * ratio_sqrt
         z_where[:, 2:] = 2. / self.args.num_cell_h * (self.offset + 0.5 + z_where[:, 2:].tanh()) - 1
 
         z_where = z_where.permute(0, 2, 3, 1).reshape(-1, 4)
@@ -255,9 +257,9 @@ class ProposalRejectionCell(nn.Module):
         self.register_buffer('prior_depth_mean', torch.zeros(1))
         self.register_buffer('prior_depth_std', torch.ones(1))
         self.register_buffer('prior_where_mean',
-                             torch.tensor([-5., 0., 0., 0.]).view((z_where_scale_dim + z_where_shift_dim), 1, 1))
+                             torch.tensor([-5., -5., 0., 0.]).view((z_where_scale_dim + z_where_shift_dim), 1, 1))
         self.register_buffer('prior_where_std',
-                             torch.tensor([2.0, 1., 1., 1.]).view((z_where_scale_dim + z_where_shift_dim), 1, 1))
+                             torch.tensor([2.0, 2.0, 1., 1.]).view((z_where_scale_dim + z_where_shift_dim), 1, 1))
         self.register_buffer('prior_z_pres_prob', torch.tensor(self.z_pres_anneal_start_value))
         self.register_buffer('num_cell', torch.tensor(self.args.num_cell_h * self.args.num_cell_w))
 
