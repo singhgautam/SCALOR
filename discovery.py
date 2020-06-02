@@ -217,7 +217,10 @@ class ProposalCore(nn.Module):
         # (bs, dim, 8, 8)
         z_where_origin = z_where.clone()
 
-        z_where[:, :2] = z_where[:, :2].relu() + 1e-6
+        z_where = torch.cat([
+            z_where[:, :2].relu() + 1e-6,
+            2. / self.args.num_cell_h * (self.offset + 0.5 + z_where[:, 2:].tanh()) - 1
+        ], dim=-1)
 
         # scale, ratio = z_where[:, :2].tanh().chunk(2, 1)
         # scale = self.args.size_anc + self.args.var_s * scale  # add bias to let masking do its job
@@ -225,7 +228,7 @@ class ProposalCore(nn.Module):
         # ratio_sqrt = ratio.sqrt()
         # z_where[:, 0:1] = scale / ratio_sqrt
         # z_where[:, 1:2] = scale * ratio_sqrt
-        z_where[:, 2:] = 2. / self.args.num_cell_h * (self.offset + 0.5 + z_where[:, 2:].tanh()) - 1
+        # z_where[:, 2:] = 2. / self.args.num_cell_h * (self.offset + 0.5 + z_where[:, 2:].tanh()) - 1
 
         z_where = z_where.permute(0, 2, 3, 1).reshape(-1, 4)
 
