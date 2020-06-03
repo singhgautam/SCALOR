@@ -88,7 +88,7 @@ def main(args):
             model.proposal_rejection_cell.anneal(global_step)
 
             # time-steps anneal
-            model.args.seq_len = np.interp(global_step, [30000, 32000, 34000, 36000, 38000], [2, 4, 6, 8, 10]).int()
+            model.args.seq_len = int(np.interp(global_step, [30000, 32000, 34000, 36000, 38000], [2, 4, 6, 8, 10]))
             args.seq_len = model.args.seq_len
 
             log_phase = global_step % args.print_freq == 0 or global_step == 1
