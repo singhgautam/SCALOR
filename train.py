@@ -87,13 +87,16 @@ def main(args):
             model.args.sigma = np.interp(global_step, [0, 1000, 30000, 32000], [8.0, 0.0005, 0.0005, 0.15])
             model.proposal_rejection_cell.anneal(global_step)
 
+            # time-steps anneal
+            model.args.seq_len = np.interp(global_step, [30000, 32000, 34000, 36000, 38000], [2, 4, 6, 8, 10]).int()
+            args.seq_len = model.args.seq_len
+
             log_phase = global_step % args.print_freq == 0 or global_step == 1
             args.global_step = global_step
             args.log_phase = log_phase
 
             imgs = sample.to(device)
-            imgs = random_crop(imgs, 2)
-
+            imgs = random_crop(imgs, model.args.seq_len)
 
             y_seq, log_like, kl_z_what, kl_z_where, kl_z_depth, \
             kl_z_pres, kl_z_bg, log_imp, counting, \
